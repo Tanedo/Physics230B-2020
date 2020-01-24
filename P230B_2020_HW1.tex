@@ -1,0 +1,291 @@
+\documentclass[12pt]{article}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%  THE USUAL PACKAGES  %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\usepackage{amsmath}
+	\usepackage{amssymb}
+	\usepackage{amsfonts}
+	\usepackage{graphicx}
+	\usepackage{xcolor}
+	\usepackage{nopageno}
+	\usepackage{enumerate}
+	\usepackage{parskip}
+	
+	
+	\renewcommand{\thesection}{}
+	\renewcommand{\thesubsection}{\arabic{subsection}}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%  PAGE FORMATTING and (RE)NEW COMMANDS  %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\usepackage[margin=2cm]{geometry}   % reasonable margins
+	
+	\graphicspath{{figures/}}	        % set directory for figures
+	
+	% for capitalized things
+	\newcommand{\acro}[1]{\textsc{\MakeLowercase{#1}}}    
+	
+	\numberwithin{equation}{subsection}    % set equation numbering
+	\renewcommand{\tilde}{\widetilde}   % tilde over characters
+	\renewcommand{\vec}[1]{\mathbf{#1}} % vectors are boldface
+	
+	\newcommand{\dbar}{d\mkern-6mu\mathchar'26}    % for d/2pi
+	\newcommand{\ket}[1]{\left|#1\right\rangle}    % <#1|
+	\newcommand{\bra}[1]{\left\langle#1\right|}    % |#1>
+	\newcommand{\Xmark}{\text{\sffamily X}}        % cross out
+	
+	\let\olditemize\itemize
+	\renewcommand{\itemize}{
+	  \olditemize
+	  \setlength{\itemsep}{1pt}
+	  \setlength{\parskip}{0pt}
+	  \setlength{\parsep}{0pt}
+	}
+	
+	
+	% Commands for temporary comments
+	\newcommand{\comment}[2]{\textcolor{red}{[\textbf{#1} #2]}}
+	\newcommand{\flip}[1]{{\color{red} [\textbf{Flip}: {#1}]}}
+	\newcommand{\email}[1]{\texttt{\href{mailto:#1}{#1}}}
+	
+	\newenvironment{institutions}[1][2em]{\begin{list}{}{\setlength\leftmargin{#1}\	setlength\rightmargin{#1}}\item[]}{\end{list}}
+	
+	
+	\usepackage{fancyhdr}		% to put preprint number
+	
+	
+	
+	
+	%%%%%%%%%%%%%%%%%%%
+	%%%  HYPERREF  %%%%
+	%%%%%%%%%%%%%%%%%%%
+	
+	%% This package has to be at the end; can lead to conflicts
+	\usepackage{microtype}
+	\usepackage[
+		colorlinks=true,
+		citecolor=black,
+		linkcolor=black,
+		urlcolor=green!50!black,
+		hypertexnames=false]{hyperref}
+	
+
+
+
+
+\begin{document}
+\begin{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\Large \textsc{Weekly HW 1}:
+\textbf{Generating Functions}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+\end{center}
+
+\vskip .4cm
+
+\noindent
+\begin{tabular*}{\textwidth}{rl}
+	\textsc{Course:}& Physics 230B, \emph{Quantum Field Theory II} (2020)
+	\\
+	\textsc{Instructor:}& Prof. Flip Tanedo (\email{flip.tanedo@ucr.edu})
+	\\
+	\textsc{Due by:}& {Tuesday}, January 28
+\end{tabular*}
+
+\noindent You don't have to do them all, but you might want to try.
+
+\vspace{1em}
+{\Large \bf \sffamily Review Problems}
+\vspace{-1em}
+
+\subsection{The main result, back of the envelope style.}
+
+Start with a Lagrangian 
+\begin{align}
+	L &= \frac{1}{2} x \mathcal O x + J x \ ,
+\end{align}
+where $\mathcal O$ is an operator. Let's be cavalier and treat $\mathcal O$ as a number. Use the Euler--Lagrange equation to derive that we may equivalently express the Lagrangian as
+\begin{align}
+	L &= - J \frac{1}{2\mathcal O} J \ .
+\end{align}
+
+
+{\footnotesize From Lancaster \& Blundell, exercise (23.1).}
+
+
+\subsection{Graph Theory}
+
+Prove the graph theory result that relates the number of loops $L$, internal lines $I$, and vertices $V$ in a graph:
+\begin{align}
+	L = I - V + 1.
+\end{align}
+
+\subsection{Going between metrics}
+
+What are the momentum space Feynman propagators for a scalar field using the $(+,-,-,-)$ metric and the $(-,+,+,+)$ metric?
+
+
+\subsection{Osborn's useful identity}
+
+Prove the Osborn identity that we've been using in lecture for two function $G$ and $F$:
+\begin{align}
+	G(\partial_J)F(J)
+	&= 
+	\left.
+	F(\partial_q)G(q)
+	e^{Jq}
+	\right|_{q=0} \ .
+\end{align}
+Assume that $F$ and $G$ are expandable as power series or Fourier series. Extend this to the case of many variables. 
+
+{\footnotesize From Hugh Osborn's Part III AQFT Lent 2012 course, examples 1.}
+
+
+
+% \vspace{1em}
+\newpage
+{\Large \bf \sffamily Important Ideas That Weren't in Lecture}
+\vspace{-1em}
+
+\subsection{Symmetry factors}
+
+Remind yourself how symmetry factors work. If you don't know, then read up. The discussion in Osborn's lecture notes begins on page 16. Given a term in the potential 
+\begin{align}
+	V[\phi] = \frac{\lambda}{S}\phi(x)^4 \ ,
+\end{align}
+what is the appropriate symmetry factor, $S$, so that the Feynman rule for this vertex is $-i\lambda$?
+
+\subsection{Zero-dimensional QFT}
+
+Zero-dimensional QFT (quantum mechanics) is a useful system whenever things get challenging. A zero-dimensioanl model for the functional integral in QFT is
+\begin{align}
+	Z(\lambda) = \frac{1}{\sqrt{2\pi}} 
+	\int dx\, e^{-\frac{1}{2} x^2 - \frac{\lambda}{4!}x^4} \ .
+\end{align}
+Assume $\lambda > 0$, as require by vacuum stability. Obtain the $N^\text{th}$ order perturbation expansion
+\begin{align}
+	Z_N(\lambda) 
+	&= 
+	\sum_{n=0}^N \left(\frac{-\lambda}{4!}\right)^n \frac{(4n)!}{2^{2n}(2n)! n!} \ .
+\end{align}
+Show that this gives a generating function for connected diagrams,
+\begin{align}
+	W(\lambda) = \log Z(\lambda) 
+	= -\frac{\lambda}{8} + \frac{\lambda^2}{12} - \frac{11\lambda^3}{96} +
+	\mathcal O(\lambda^4) \ .
+\end{align}
+Show how the coefficients in the expansion of $W(\lambda)$ are the sums of the symmetry factors of the relevant connected vacuum graphs. \text{Hint}: there is one vacuum diagram at two loops, two at three loops, and four at four loops. 
+
+
+\textsc{Bonus:} Why is $Z(\lambda) < 1$? Plot $Z_N(\lambda)$ for $\lambda = 0.1$ as a function of $N$ and show where the result appears to converge to a precise factor before blowing up for larger $N$. Be expanding $e^{-x^2/2}$, obtain a convergent strong coupling expansion in terms of powers of $\lambda^{-(2n+1)/4}$ for $n=0,1,\cdots$. How many terms does one need for $\lambda=0.1$ to get the previous result?
+
+{\footnotesize From Hugh Osborn's Part III AQFT Lent 2012 course, examples 1.}
+
+\subsection{Time ordering}
+
+What happened to time ordering in our correlation functions? Didn't these show up all the time during canonical quantization?
+
+
+In scalar quantum field theory, for some in- and out-state spatial (fixed time) field configuration $\phi_a(\vec{x})$ and $\phi_b(\vec{x})$
+\begin{align}
+	\langle \phi_b(\vec{x}) | e^{-iHT} | \phi_a(\vec{x}) \rangle 
+	= 
+	\int \mathcal D \phi \, e^{iS}  \ ,
+	\label{eq:Peskin:9.14}
+\end{align}
+the analog of the expression in quantum mechanics.
+%
+Now consider
+\begin{align}
+	\int \mathcal D\phi \; \phi(x_1) \phi(x_2)\, e^{iS} \ . 
+	\label{eq:Peskin:2point}
+\end{align}
+Here $x_1$ and $x_2$ are specific points in spacetime.
+The path integral is assumed to satisfy the boundary conditions
+\begin{align}
+	\phi(-T, \vec{x}) &= \phi_{\text{in}}(\vec{x})
+	&
+	\phi(T, \vec{x}) &= \phi_{\text{out}}(\vec{x}) \ ,
+\end{align}
+where eventually we take the `large' time $T\to \infty$.
+A useful trick is to take \eqref{eq:Peskin:2point} and restrict the field $\phi$ to have a a specific spatial dependence $\phi_1(\vec{x})$ at $t=x_1^0$, and similarly $\phi_2(\vec{x})$ at $t=x_2^0$. Then integrate over the spatial configurations $\phi_{1,2}(\vec{x})$:
+\begin{align}
+	\int \mathcal D\phi_1(\vec{x})
+	\int \mathcal D\phi_2(\vec{x})
+	\int \left. \mathcal D\phi\right|_{%
+	\phi(x^0_1,\vec{x})=\phi_1(\vec{x}) ,\; 
+	\phi(x^0_2,\vec{x})=\phi_2(\vec{x})
+	%
+	} \; \phi(x_1) \phi(x_2)\, e^{iS} \ . 
+	\label{eq:Peskin:2point:b}
+\end{align}
+This means that the $\mathcal D \phi$ integration breaks up into three separate path integrals that may be written using \eqref{eq:Peskin:9.14}. The particular amplitudes depend on the ordering of $x_1^0$ and $x_2^0$. 
+
+Show that 
+\begin{align}
+	\int \mathcal D\phi \; \phi(x_1) \phi(x_2)\, e^{iS} 
+	= 
+	\langle \phi_\text{out} |
+	e^{iHT}
+	\mathcal T\left[ \phi_H(x_1) \phi_H(x_2) \right]
+	e^{-iHT}
+	| \phi_\text{in} \rangle \ ,
+\end{align}
+where $\mathcal T$ is the time ordering operation. This shows that our functional integral mumbo jumbo indeed produces the same correlation functions/amplitudes that you wrote down in QFT I.
+
+\textsc{Hints}: Convert the states into Schr\"odinger operators using $\hat \phi_S(\vec{x}_1)|\phi_1\rangle = \phi_1(\vec{x}_1)|\phi_1 \rangle$. You should then be able to convert to absorb factors of the time evolution operator by converting from Schr\"odinger to Heisenberg fields, $\phi_H(x^0_1, \vec{x}_1) = \phi_H(x_1)$. 
+
+{\footnotesize From Peskin \& Schroeder section 9.2.}
+
+\subsection{Partition Function}
+
+Banks' \emph{Modern Quantum Field Theory: A Concise Introduction} introduces the partition function as \emph{the vacuum persistence amplitude in the presence of a source},
+\begin{align}
+	Z[J] = \langle 0 | \mathcal T e^{i\int d^4x\, J(x)\phi(x)}|0\rangle  \ .
+\end{align}
+Derive this using operator methods.
+
+
+{\footnotesize From Banks, equation (3.3)}
+
+\vspace{1em}
+{\Large \bf \sffamily Challenge Problems}
+\vspace{-1em}
+
+\subsection{Quantum statistical mechanics}
+
+Do Peskin \& Schroeder problem 9.2, parts (a--d).
+
+\vspace{1em}
+{\Large \bf \sffamily 
+Check your understanding
+}
+\vspace{-1em}
+
+\subsection{Complex Scalar Fields}
+
+How does everything we did for scalar field theory change if we replaced the real scalar field with a complex scalar field? Write down the action. How does the path integral formulation change compared to what we did in class? 
+
+You can describe qualitatively, but if you do this you'd better be correct and not miss anything. I suggest re-deriving everything from scratch, using our lectures and the Osborn notes (or whatever other reference) as a guide. 
+
+What does the free field generating function for connected diagrams, $W[J]$ look like? Or in other words, what is the analog of
+\begin{align}
+	Z[J] = \text{exp}\left(
+	-\frac{1}{2} \int d^dx\, d^dy \, J(x) i\Delta_F(x-y)J(y)
+	\right)
+\end{align}
+for a complex scalar field? Calculate an appropriate, non-trivial four-point correlation function using the functional methods we developed in class. Identify one trivial four-point function and explain why it's trivial.
+
+
+\textsc{Comment}: if you can do this problem without having to look at your notes for too much guidance, then you're in great shape for this class. 
+
+
+
+\end{document}
