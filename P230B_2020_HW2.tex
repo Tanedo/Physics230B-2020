@@ -1,0 +1,703 @@
+\documentclass[12pt]{article}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%  THE USUAL PACKAGES  %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\usepackage{amsmath}
+	\usepackage{amssymb}
+	\usepackage{amsfonts}
+	\usepackage{graphicx}
+	\usepackage{xcolor}
+	\usepackage{nopageno}
+	\usepackage{enumerate}
+	\usepackage{parskip}
+	\usepackage{slashed}
+	
+	
+	\renewcommand{\thesection}{}
+	\renewcommand{\thesubsection}{\arabic{subsection}}
+	
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	%%%  PAGE FORMATTING and (RE)NEW COMMANDS  %%%%
+	%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	\usepackage[margin=2cm]{geometry}   % reasonable margins
+	
+	\graphicspath{{figures/}}	        % set directory for figures
+	
+	% for capitalized things
+	\newcommand{\acro}[1]{\textsc{\MakeLowercase{#1}}}    
+	
+	\numberwithin{equation}{subsection}    % set equation numbering
+	\renewcommand{\tilde}{\widetilde}   % tilde over characters
+	\renewcommand{\vec}[1]{\mathbf{#1}} % vectors are boldface
+	
+	\newcommand{\dbar}{d\mkern-6mu\mathchar'26}    % for d/2pi
+	\newcommand{\ket}[1]{\left|#1\right\rangle}    % <#1|
+	\newcommand{\bra}[1]{\left\langle#1\right|}    % |#1>
+	\newcommand{\Xmark}{\text{\sffamily X}}        % cross out
+	
+	\let\olditemize\itemize
+	\renewcommand{\itemize}{
+	  \olditemize
+	  \setlength{\itemsep}{1pt}
+	  \setlength{\parskip}{0pt}
+	  \setlength{\parsep}{0pt}
+	}
+	
+	
+	% Commands for temporary comments
+	\newcommand{\comment}[2]{\textcolor{red}{[\textbf{#1} #2]}}
+	\newcommand{\flip}[1]{{\color{red} [\textbf{Flip}: {#1}]}}
+	\newcommand{\email}[1]{\texttt{\href{mailto:#1}{#1}}}
+	
+	\newenvironment{institutions}[1][2em]{\begin{list}{}{\setlength\leftmargin{#1}\	setlength\rightmargin{#1}}\item[]}{\end{list}}
+	
+	
+	\usepackage{fancyhdr}		% to put preprint number
+	
+	
+	
+	
+	%%%%%%%%%%%%%%%%%%%
+	%%%  HYPERREF  %%%%
+	%%%%%%%%%%%%%%%%%%%
+	
+	%% This package has to be at the end; can lead to conflicts
+	\usepackage{microtype}
+	\usepackage[
+		colorlinks=true,
+		citecolor=black,
+		linkcolor=black,
+		urlcolor=green!50!black,
+		hypertexnames=false]{hyperref}
+	
+
+
+
+
+\begin{document}
+\begin{center}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+{\Large \textsc{HW 2}:
+\textbf{Regularization and Renormalization}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+\end{center}
+
+\vskip .4cm
+
+\noindent
+\begin{tabular*}{\textwidth}{rl}
+	\textsc{Course:}& Physics 230B, \emph{Quantum Field Theory II} (2020)
+	\\
+	\textsc{Instructor:}& Prof. Flip Tanedo (\email{flip.tanedo@ucr.edu})
+	\\
+	\textsc{Due by:}& {Friday}, March 13 via e-mail (e.g.~use Barkas scanner)
+\end{tabular*}
+
+\noindent You don't have to do them all, but you might want to try.
+
+
+\vspace{1em}
+{\Large \bf \sffamily Techniques for Loop Integrals}
+% \vspace{-1em}
+
+The typical form of a loop integral in $d$ dimensions is
+\begin{align}
+	I_{\mu_1\mu_2\cdots} \sim
+	\int
+	\dbar^d k
+	\frac{
+		k_{\mu_1}k_{\mu_2}\cdots k_{\mu_n}
+	}
+	{
+		\left[(k + q_1)^2 - m_1^2 + i\varepsilon\right]
+		\left[(k + q_2)^2 - m_2^2 + i\varepsilon\right]
+		\cdots
+		\left[(k + q_p)^2 - m_p^2 + i\varepsilon\right]
+	}
+	\label{eq:gen:loop}
+\end{align}
+We write $\dbar = d/(2\pi)$.
+This set of problems highlights some of the techniques for simplifying and performing integrals of this form. You may find \texttt{1105.4319} helpful, or perhaps Jorge Romão's Advanced Quantum Field Theory lectures.
+
+
+\subsection{Warm Up: Numerators of Loop Integrands}
+
+For simplicity, assume that we calculate the loop integral \eqref{eq:gen:loop} in the limit of zero external momenta, $q_i\to 0$. 
+\begin{enumerate}
+\item Argue that the integrand vanishes when $n$ is odd.
+\item Argue that for $n$ even, $n = 2m$, the integrand is
+\begin{align}
+	k_{\mu_1}k{\mu_2}\cdots k_{\mu_{2m}} 
+	= C k^{2n}\sum^{\text{perm.}}_{\{i\}}
+	\eta_{\mu_{i_1}\mu_{i_2}}
+	\eta_{\mu_{i_3}\mu_{i_4}}
+	\cdots
+	\eta_{\mu_{i_{2m-1}}\mu_{i_{2m}}} \ .
+\end{align}
+\item Solve for $C$ when $n=2$ and $n=3$. \textsc{Hint}: project out the tensor structure by contracting with some product of metrics on both sides.
+\end{enumerate}
+
+\textsc{Comment}: This shows that you can simplify any tensor structure in the numerator of an integrand into a scalar structure. For example, you may have a loop integrand a factors like $\slashed{k} (k\cdot q)$. This problem shows that this is proportional to $\slashed{q} k^2$. 
+
+
+\subsection{Warm Up: Partial Fraction Decomposition for Loop Integrands}
+\label{probl:partial:fraction}
+
+Consider the set of nice integrands,
+\begin{align}
+	I^{(2n)}_p(m_1,\cdots,m_p)
+	&= 
+	\int \dbar^d k
+	\frac{k^{2n}}{(k^2-m_1^2)(k^2-m_2^2)\cdots (k^2-m_p^2)} \ .
+\end{align}
+
+\subsubsection{Reducing the numerator}
+
+Show that:
+\begin{align}
+	I^{(2n)}_p(m_1,\cdots,m_p)
+	&= 
+	I^{(2n-2)}_{p-1}(m_1,\cdots,m_{p-1})
+	+
+	m_p^2 
+	I^{(2n-2)}_p(m_1,\cdots,m_{p})\ .
+\end{align}
+\textsc{Hint}: prove this for the case $n=1$ and $p=1$ first. It may help to write this case out explicitly.
+
+
+\subsubsection{Converting to a sum of simpler, more divergent integrands}
+For $p\geq 2$, show that:
+\begin{align}
+	I^{(2n)}_p(m_1,\cdots,m_p)
+	&= 
+	\frac{1}{m_1^2 - m_p^2}
+	\left[
+	I^{(2n)}_{p-1}(m_1,\cdots,m_{p-1})
+	+
+	I^{(2n)}_{p-1}(m_2,\cdots,m_{p})
+	\right] \ .
+\end{align}
+\textsc{Hint}: prove this for the case $n=0$ and $p=2$ first. It may help to write this case out explicitly.
+
+
+
+
+\subsection{Feynman Parameters}
+% From Peskin
+Peskin \& Schroeder chapter 6.3 introduces Feynman parameters as a technique to simplify loop integrands.
+
+
+\subsubsection{General parameterization}
+Prove the general Feynman parameterization of a loop integrand (P\&S 6.41),
+\begin{align}
+	\frac{1}{A_1A_2\cdots A_n}
+	&= 
+	\int_0^1dx_1\int_0^1dx_2\cdots \int_0^1dx_n
+	\;
+	\delta\left(\sum_i x_i -1\right)
+	\frac{(n-1)!}{\left(\sum_j x_j A_j\right)^n}
+	\ ,
+\end{align}
+where $A_i = (k^2 - m_i^2+i\varepsilon)$ is a typical term coming from a propagator. You should prove the case for $n=2$ and then argue by induction. 
+
+\subsubsection{Feynman Parameters in Action: part I}
+
+The power of the Feynman parameterization is that it lets us convert a loop integrand's ugly denominator into a beautiful denominator. 
+\begin{itemize}	
+\item An \emph{ugly denominator} is a product of factors that contain quadratic $k^2$ and linear $k\cdot q$ terms in the loop momentum, $k$. We write $q$ as some combination of fixed external momenta. 
+
+\item A \emph{beautiful denominator} is a product of factors that only contain quadratic terms in the loop momentum. This means that it is spherically symmetric in integration variable. 
+\end{itemize}	
+Consider the following loop integrand with an ugly denominator:
+\begin{align}
+	\frac{d^dk}{
+	[(k-p_1)^2 -m_1^2 +i\varepsilon]
+	[(k-p_2)^2 -m_2^2 +i\varepsilon]
+	[(k-p_3)^2 -m_3^2 +i\varepsilon]
+	}\ .
+\end{align}
+For general $p_{1,2,3}$, there is no obvious way to shift the integration variable to simultaneously turn each of these three factors into functions of only $k^2$ and not $k\cdot p_i$. In other words, it is not clear how to make this denominator beautiful. Feynman parameterization lets write this as
+\begin{align}
+	\frac{1}{
+	[(k-p_1)^2 -m_1^2]
+	[(k-p_2)^2 -m_2^2]
+	[(k-p_3)^2 -m_3^2]
+	}
+	&= \int_0^1 dx\,dy\,dz\,\delta(x+y+z-1)\frac{2}{D^3} \ .
+\end{align}
+Explicitly write out $D$. We dropped the $\varepsilon$ on the left-hand side, but you should write it to $\mathcal O(\varepsilon)$ on the right-hand side.
+
+\textsc{Comment}: at this point, you can massage the general loop integrand in \eqref{eq:gen:loop} into an \emph{beautiful} integrand that is spherically symmetric in a shifted loop momentum integration variable, $\ell_\mu$.
+
+{\footnotesize Adapted from Peskin \& Schroeder.}
+% {\footnotesize From...}
+
+
+\subsubsection{Feynman Parameters in Action: part II}
+
+One may now write the integral with a beautiful denominator at the cost of the $dx\,dy\,dz$ integral over \emph{Feynman parameters}. Complete the square in $D$ by defining a variable
+\begin{align}
+\ell_\mu &= k_\mu + f(x,y,z,p_1,p_2, p_3)_\mu \ 
+\end{align}
+such that $D = \ell^2 - \Delta + i\varepsilon$. Explicitly write out the linear function $f_\mu$ and the expression for $\Delta$. Note that $\Delta$ is independent of $\ell$ but depends on the Feynman parameters.
+
+
+
+{\footnotesize Adapted from Peskin \& Schroeder.}
+% {\footnotesize From...}
+
+
+
+\subsection{Schwinger Parameters}
+
+There is an alternative way to convert the denominator of a loop integrand into something that only depends on $\ell^2$ and not $\ell_\mu$. This is apparently due to Feynman's rival, Schwinger\footnote{\url{https://www.quora.com/What-did-Richard-Feynman-and-Julian-Schwinger-think-of-each-others-theories}}. 
+
+\subsubsection{Schwinger Formula}
+
+Prove that
+\begin{align}
+	\frac{1}{P^a}
+	= 
+	\frac{1}{\Gamma(a)}
+	\int_0^\infty dx\, x^{a-1} e^{-xP} \ .
+\end{align}
+
+\subsubsection{How to use the Schwinger Formula}
+
+The power of the Schwinger formula is that one can relate the propagator factors in a loop integrand into $\Gamma$ functions,
+\begin{align}
+	\Gamma(\alpha) = \int_0^\infty dx\, x^{\alpha-1}e^{-x} \ .
+\end{align}
+Consider a loop integral of the form:
+\begin{align}
+	I &=
+	\frac{-1}{\Gamma(d/2) (4\pi)^{d/2}}
+	\int_0^\infty
+	dk \, k^{d-1}
+	\frac{1}{k^2 + m^2} \ ,
+\end{align}
+where we've peeled off the angular integral and have assumed a Wick rotation so that the denominator is $k^2 + m^2$. Show that the Schwinger trick produces:
+\begin{align}
+	I &= 
+	\frac{-1}{2}\frac{1}{(4\pi)^{d/2}} \Gamma\left(1-\frac{d}{2}\right)
+	(m^2)^{\frac{d}{2}-1} \ .
+\end{align}
+
+
+
+
+{\footnotesize From \texttt{hep-ph/0604068}, see also Hugh Osborn's AQFT lectures, or Appendix B of Schwartz's textbook.}
+
+
+\subsubsection{Wick Rotation to Euclidean Space}
+
+
+Your generic loop integral now takes the form
+\begin{align}
+	\int \dbar^{d-1}\ell \int \dbar \ell^0 \, 
+	\frac{\ell^{2m}}{\left(\ell^2 - \Delta + i\varepsilon\right)^p} \ .
+	\label{eq:int:ell}
+\end{align}
+The squared four-momentum is
+\begin{align}
+	\ell^2 = (\ell^0)^2 - \sum_{i=1}^{d-1}(\ell^i)^2 \ .
+\end{align}
+Recall that one way to introduce the $+i\varepsilon$ factor is to ensure that the path integral converges. It also imposes the Feynman prescription for how we choose to move the poles of the integrand off the integration axis. This has implications on causality analogous to the advanced and retarded propagators that you may remember from mathematical methods or electrodynamics. 
+
+We'd like to use the spherical symmetry of the integrand to perform the loop integral. A challenge, however, is that in Euclidean spacetime, $\ell^2\geq 0$. On the other hand, in Lorentzian spacetime, $\ell^2$ is not necessarily timelike ($\ell^2>0$), but may also be spacelike ($\ell^2 <0$). The \textbf{Wick Rotation} is a change of variables from Lorentzian energy $\ell^0$ to a Euclidean energy $\ell^0_E$. 
+
+\subsubsection{Contour Integral}
+
+Draw the complex $\ell^0$ plane. Identify the positions of poles of $\ell^0$ in terms of $\Delta$ and $\varepsilon$. The $d\ell^0$ integral in \eqref{eq:int:ell} is performed over $\text{Re}\,\ell^0$. Complete the integration contour and define the Euclidean energy, $\ell^0_E$ with respect to Lorentzian energy. Select the correct signs for the following expressions:
+\begin{align}
+	\ell^0 &= \pm i \ell_E^0 \\
+	\int_{-\infty}^\infty d\ell^0 &= \pm i \int_{-\infty}^\infty d\ell_E^0 \ \\
+	\ell^2 &= \pm \left[ \left(\ell_E^0\right)^2 + \sum_{i=1}^{d-1}(\ell^i)^2 \right] \ .
+\end{align}
+
+\subsubsection{Convergence of the Wick Contour}
+
+Use the Schwinger parameterization to justify that the Wick rotation is valid. The primary concern is that the integrand may not be sufficiently convergent very far from the origin. Show that 
+\begin{align}
+	\int \dbar \ell^0 \frac{1}{\left[\ell^2 - \Delta + i\varepsilon\right]^p}
+	&=
+	\frac{(-i)^p}{\Gamma(p)}\int_0^z dz \, z^{p-1} \int \dbar\ell^0 e^{-iz(\Delta - (\ell^0)^2) + \sum_i^{d-1}(\ell^i)^2-i\varepsilon}
+	\ .
+\end{align}
+From here, parameterize the angular part of the contour integral by
+\begin{align}
+	\ell^0 = |\ell^0| \left(\cos \theta + i\sin \theta\right) \ ,
+\end{align}
+and show that the angular part of the contour integral vanishes for any value of $\theta$ with in the limit of large $|\ell^0|$.
+
+
+{\footnotesize From Romão's AQFT lectures.}
+
+
+\subsubsection{Wick Rotation in Position Space}
+
+A Wick rotation converts Minkowski momenta into Euclidean momenta. What is the analogous transformation of Minkowski positions $x^\mu$ into Euclidean positions?
+
+
+
+
+\subsubsection{Angular Volumes in \texorpdfstring{$d$}{d} Dimesions}
+% {\footnotesize From...}
+
+For a spherically symmetric integrand in $d$-dimensional Euclidean space, one may explicitly perform the $d$-dimensional integral:
+\begin{align}
+	\int_\text{angular} d^dk_E = S_d\, k_E^{d-1} \,dk_E \ ,
+\end{align}
+where $k_E$ on the right-hand side is understood to be the radial integration variable. Familiar values of $S_d$ are the surface areas of the unit segment, circle, and sphere:
+\begin{align}
+	S_1 &=2 
+	&
+	S_2 &=2\pi
+	&
+	S_3&=4\pi \ .
+\end{align}
+The definition of the $\Gamma$ function is 
+\begin{align}
+	\Gamma(\alpha) = \int_0^\infty dx\, x^{\alpha-1}e^{-x} \ .
+\end{align}
+Show that 
+\begin{align}
+	S_d &= 2\pi^{d/2}\Gamma\left(\frac{d}{2}\right).
+\end{align}
+\textsc{Hint}: 
+Remember how we solved the two-dimensional Gaussian integral by going to spherical coordinates? Do this problem the same way. Evaluate
+\begin{align}
+	\int d^d k \, e^{-\lambda k^2}
+\end{align}
+using the standard Gaussian integral formula (you get $d$ factors) and then using the $d$-dimensional spherical coordinates. 
+
+
+
+{\footnotesize Adapted from Hugh Osborn's AQFT lectures.}
+% eq. 4.43
+
+
+\subsection{The Magic Formula}
+
+There's a convenient magic formula for loop integrals:
+\begin{align}
+	\int \dbar^n \ell \frac{(\ell^2)^b}{\left(\ell^2 - \Delta\right)^a}
+	&= 
+	\frac{i}{(4\pi)^{n/2}}(-)^{a+b}
+	\Delta^{b-a+n/2}
+	\frac{\Gamma(b+n/2)\Gamma(a-b-n/2)}{\Gamma(n/2)\,\Gamma(a)}
+\end{align}
+I think this expression is correct. You are advised to check the validity against (A.44) -- (A.47) in Peskin \& Schroeder. 
+
+
+\textsc{Hint}: It may be useful to use the Euler Beta function as an intermediate step,
+\begin{align}
+	B(x,y) \equiv \int_0^1 dt \, t^{x-1}(1-t)^{y-1}
+	= \int_0^\infty dt \frac{t^{x-1}}{(1+t)^{x+y}}
+	= \frac{\Gamma(x)\Gamma(y)}{\Gamma(x+y)} \ .
+\end{align}
+Then again, it may also not be useful. Who knows.
+% hep-ph/0604068 (2.56)
+
+
+
+\subsection{Passarino--Veltman Integrals}
+
+If all of this loop integral stuff is starting to sound formulaic but tedious, then you'll be glad to know that Passarino and Veltman tabulated most of the hard work for us
+\footnote{G. Passarino and M. J. G. Veltman, Nucl.~Phys.~\textbf{B160}, 151 (1979)}. The Passarino--Veltman functions encode the loop integrals \eqref{eq:gen:loop} as a function of the masses and external momenta. More complicated integrals are related to simpler integrals by techniques that boil down to those in Problem~\ref{probl:partial:fraction}. The simplest Passarino--Veltman functions are now readily tabulated and you can use them as look-up tables to quickly reference loop integral results. \emph{Mathematica} [packages like \texttt{LoopTools} and \texttt{Package-X} encode these readily.
+
+The first couple of Passarino--Veltman integrals are: 
+% Romao, app C
+\begin{align}
+	A_0(m_0^2) &= \frac{(2\pi\mu)^\epsilon}{i\pi^2} \int d^dk \frac{1}{k^2 - m_0^2}
+	\\
+	B_0(r_{10}^2, m_0^2, m_1^2)
+	&= 
+	\frac{(2\pi\mu)^\epsilon}{i\pi^2} 
+	\int d^dk 
+	\frac{1}{\left[(k+r_0)^2 -m_0^2\right]}
+	\frac{1}{\left[(k+r_1)^2 -m_1^2\right]}
+	\ ,
+\end{align}
+where 
+\begin{align}
+	r_{10}^2 = (r_1-r_0)^2 \ .
+\end{align}
+\subsubsection{Simple Example of Passarino--Veltman Reduction}
+Prove that
+\begin{align}
+	B_0(0,m_0^2, m_1^2)
+	&= \frac{A_0(m_0^2)- A_0(m_1^2)}{m_0^2 - m_1^2} \ .
+\end{align}
+
+\subsubsection{Where the Passarino--Veltman Integrals Show Up}
+
+Consider the $\mathcal O(\lambda)$ self-energy diagram for $\phi^4$ theory. Assume that the $\phi$ particle has mass $m$ momentum $p_\mu$. The loop integral may be expressed as a Passarino--Veltman function. What is the function? Write out the arguments explicitly.
+
+Do the same for QED for the electron self energy and the photon self energy.
+
+\textsc{Comment}: Up to dealing with indices, you should appreciate how \emph{easy} it is to just write out loop integrals and not actually perform them. Passarino and Veltman have done all the hard work for us. If you want, for example, the divergent part of these diagrams, you simply have to look up the divergences in the Passarino--Veltman integrals. 
+
+% \textsc{Comment}: by unitarity arguments, these same integrals show up when diagnosing infrared divergences.
+
+
+% LOOK UP TABLE... HW: mathematica?
+
+\subsubsection{Computer Algebra Systems for Loops (Extra Credit)}
+
+Use \texttt{LoopTools} or \texttt{Package-X} to calculate the $\beta$ functions for $\phi^4$ theory, QED, and Yang--Mills theory. Write a tutorial and share it with the rest of the class. 
+
+\vspace{1em}
+{\Large \bf \sffamily Power Counting}
+
+\subsection{Superficial Degree of Divergence}
+
+Some integrals diverge, others do not. The \textbf{superficial degree of divergence}, $D$, is a power-counting estimate for the extent to which a diagram diverges; see Peskin \& Schroeder Section~10.1:
+\begin{align}
+	D 
+	&= 
+	\left(\text{powers of $k$ in numerator}\right)
+	-
+	\left(\text{powers of $k$ in denominator}\right) \ ,
+\end{align}
+where we include the powers of the loop momentum $k$ in the integration measure, $d^dk$. 
+%
+When $D\geq 0$, we expect the integral to diverge as $\Lambda^D$, where $\Lambda$ is a cutoff and $\Lambda^0 \sim \log\Lambda$. 
+
+{\footnotesize Adapted from Peskin \& Shroeder.}
+
+\subsubsection{Superficial Degree of Divergence in QED}
+
+In QED, show that
+\begin{align}
+	D = dL - P_e - 2P_\gamma \ ,
+\end{align}
+where $d$ is the number of spacetime dimensions ($d=4$ usually), $L$ is the number of loops, $P_e$ is the number of electron propagators and $P_\gamma$ is the number of photon propagators.
+
+
+\subsubsection{A bit of graph theory}
+
+Argue that 
+\begin{align}
+	L = P_e + P_\gamma - V + 1 \ ,
+\end{align}
+where $V$ is the number of vertices. 
+
+Argue, further, that
+\begin{align}
+	V = 2P_\gamma + N_\gamma = \frac{1}{2}(2P_e + N_e)
+\end{align}
+where $N_{\gamma,e}$ are the number of external photons/electrons.
+
+Use these relations to express the superficial degree of divergence in terms of the number of each type of external vertex. Argue that in $d=4$ there are only a finite number of correlation functions that may diverge; identify them.
+
+\textsc{Comment}: Diagrams with more external legs may diverge, but only if they contain one of the above diagrams as a sub-diagram.
+
+
+\subsection{Why it would be annoying to live in 5D}
+
+
+Consider QED in $d$ spacetime dimensions. Show that
+\begin{align}
+	D = d 
+	+ \left(\frac{d-4}{2}\right) V
+	- \left(\frac{d-4}{2}\right) N_\gamma
+	- \left(\frac{d-1}{2}\right) N_e \ .
+\end{align}
+Argue that in contrast to $d=4$, for $d>4$, \emph{every} correlation function appears to be superficially divergent at some order in perturbation theory.
+
+
+\subsection{Power Counting and Renormalizability}
+
+Classify a quantum field theory according to the following types of UV behaviors:
+\begin{itemize}
+	\item \textbf{Super-Renormalizable}: only a finite number of \emph{diagrams} superficially diverge.
+	
+	\item \textbf{Renormalizable}: only a finite number of \emph{correlation functions} superficially diverge, though these divergences may occur all orders in the perturbation expansion.
+
+	\item \textbf{Non-Renormalizable}: \emph{All} correlation functions diverge at some order in perturbation theory. 
+\end{itemize}
+
+Consider a scalar field theory with a $\phi^n$ interaction.
+%
+Use the `fundamental theorem of graph theory' (it's not really called that), $L=I-V+1$ ($I$ is the number of internal lines), to determine the superficial degree of divergence $D$ for a diagram with $V$ vertices and $N$ external lines in $d$ dimensions.
+
+What is the mass dimension of the coupling constant of the $\phi^n$ interaction in $d$ dimensions?
+
+Show that the UV behavior of the theory reduces to identifying the mass dimension of the coupling constant:
+\begin{itemize}
+	\item \textbf{Super-Renormalizable}: Coupling has positive mass dimension.
+	
+	\item \textbf{Renormalizable}: Coupling is dimensionless.
+
+	\item \textbf{Non-Renormalizable}: Coupling has negative mass dimension.
+\end{itemize}
+
+
+{\footnotesize Adapted from Peskin \& Shroeder.}
+
+
+\subsection{\texorpdfstring{$\hbar$}{h-bar} and the Loop Expansion}
+
+Restore powers of $\hbar$ in the path integral. Argue that the loop expansion is a semi-classical expansion in $\hbar$. That is to say: in the limit $\hbar\to 0$, diagrams with more loops go to zero faster than diagrams with fewer loops.
+
+
+{\footnotesize Adapted from Srednicki, I think. At least I remember Srednicki explained this clearly.}
+
+
+
+
+\vspace{1em}
+{\Large \bf \sffamily Regularization}
+
+For this section: consider $\phi^4$ theory with coupling $\lambda$ and mass $m$. Recall that the $\mathcal O(\lambda)$ contribution to the self-energy is
+\begin{align}
+	-i\Pi(p^2)
+	&=
+	-\frac{i\lambda}{2}
+	\int \dbar^4 k
+	\frac{i}{k^2 - m^2 + i\varepsilon} \ .
+\end{align}
+Similarly, the three $\mathcal O(\lambda^2)$ contributions to the four-point function for $\phi_{p_1} + \phi_{p_2} \to \phi_{p_3} + \phi_{p_4}$ is
+\begin{align}
+	\Gamma &= \Gamma(p_1+p_2) + \Gamma(p_1-p_3) + \Gamma (p_1-p_4)
+	\\
+	\Gamma(p) 
+	&= \frac{(-i\lambda)^2}{2}
+	\int \dbar^4 k
+	\frac{i}{(k-p)^2 - m^2 + i\varepsilon}
+	\frac{i}{k^2 - m^2 + i\varepsilon}
+	\ .
+\end{align}
+These correspond to the $s$, $t$, and $u$-channel diagrams.
+
+% SEE Cheng and Li
+
+{\footnotesize Adapted from Cheng \& Li, \emph{Gauge theory of elementary particle physics.}
+
+\subsection{Pauli--Villars}
+
+One of the challenges of \emph{regulating} divergent integrals is that the regulator must respect the symmetries of the theory, or else you may be breaking the theory without realizing it. Special care is required for gauge theories. Pauli and Villars introduce a way to regulate the theory by introducing a `ghost-like' contribution to the propagator:
+\begin{align}
+	\frac{1}{k^2 - m^2 + i \varepsilon}
+	=
+	\lim_{\Lambda\to\infty}
+	\frac{1}{k^2 - m^2 + i \varepsilon}
+	-
+	\frac{1}{k^2 - \Lambda^2 + i \varepsilon}
+	=
+	\frac{m^2 - \Lambda^2}{\left(k^2 - m^2 + i \varepsilon\right)\left(k^2 - \Lambda^2 + i \varepsilon\right)}
+	\ .
+\end{align}
+For finite $\Lambda$, this renders the propagators more convergent in a loop diagram. Show that the divergence in the loop diagrams is
+\begin{align}
+	\Gamma(0)
+	&=
+	\frac{i\lambda^2\Lambda^2}{32\pi^2}
+	\int_0^1
+	dx
+	\frac{x}{x(m^2-\Lambda^2) + \Lambda^2} \approx 
+	\frac{i\lambda^2\Lambda^2}{32\pi^2}
+	\ln \frac{\Lambda^2}{m^2} 
+	\\
+	i\Pi(p^2) &= 
+	\frac{-i\lambda}{32\pi^2}\left(\Lambda^2 - m^2 \ln \frac{\Lambda^2}{m^2}\right) %\ .
+	\ ,
+\end{align}
+where $x$ is a Feynman parameter.
+
+
+\subsection{Dimensional Regularization}
+
+Solve for the divergent pieces of the one-loop self-energy and the four-point function in dimensional regularization. Show that the results are:
+\begin{align}
+	\Gamma(p) &= 
+		\frac{i\lambda^2}{32\pi^2}
+		\int_0^1 dx \frac{\Gamma(2-d/2)}{(4\pi)^{d/2}} \frac{1}{(m^2-x(1-x)p^2)^{2-d/2}}
+		\\
+	i\Pi(p^2) &= \frac{-i\lambda}{2} \frac{1}{(4\pi)^{d/2}} \frac{\Gamma(1-d/2)}{(m^2)^{1-d/2}} \ .
+\end{align}
+Expand these to explicitly write out the $1/\varepsilon$ divergence structure.
+
+
+\subsection{The Scale in Dimensional Regularization}
+
+Consider $\phi^4$ theory in $d=4-\epsilon$. Write out the action as an integral over $d^dx$. By dimensional analysis, what is the dimension of the $d$-dimensional coupling, $\lambda$? 
+
+Since we'd like to keep $[\lambda] = 0$, introduce a new, arbitrary dimensionful scale $\mu$ so that the $\lambda_{d-\text{dim}} = \lambda \mu^\delta$. What is $\delta$?
+
+Include $\mu$ in the dimensional regularization of this theory at one-loop order. Show that it appears in the combination $\ln m^2/\mu^2$. Without the scale $\mu$ appearing, we would have had a curious `dangling' term $\ln m^2$ that does not appear to make sense dimensionally.
+
+
+\vspace{1em}
+{\Large \bf \sffamily Renormalization}
+% \vspace{-1em}
+
+\subsubsection{Renormalization Conditions}
+
+Two common renormalization conditions for $\phi^4$ theory is to define the four-point coupling at zero momentum or at $s=t=u$. The zero momentum condition corresponds to measuring (in principle) the scattering of two highly non-relativistic $\phi$ particles off one another. 
+
+The $s=t=u$ condition corresponds to defining $\lambda$ at
+\begin{align}
+	(p_1+p_2)^2 = (p_1 - p_3)^2 = (p_1 - p_4)^2 \ .
+\end{align}
+Explain why this is not kinematically accessible in any physical experiment. Explain why this apparently `unphysical-ness' doesn't matter when defining a renormalization condition. 
+
+
+
+\subsubsection{Minimal Subtraction Schemes}
+
+Once one has used dimensional regularization to quantify loop divergences, a standard choice for a renormalization scheme is called \textbf{minimal subtraction}, or MS. In this scheme one defines counter terms to remove only pieces that go like $1/\epsilon$ divergences. Old textbooks sometimes call this the `mass-independent' scheme.
+
+A related scheme is called \textbf{modified minimal subtraction}, or $\overline{\text{MS}}$, wherein one subtracts not only the $1/\varepsilon$ pieces, but also the Euler--Masceroni constant, $\gamma$, and the $\ln(4\pi)$ that always come along for the ride in dimensional regularization. 
+
+Renormalize $\phi^4$ theory using MS and $\overline{\text{MS}}$. How do the results differ for the physical coupling at one loop order?
+
+\subsection{Running Coupling}
+
+Show that the $\beta$-function for $\phi^4$ theory at one-loop order is
+\begin{align}
+	\frac{d\bar\lambda}{d\ln\mu} &= \frac{3\lambda^2}{16\pi^2} \ ,
+\end{align}
+where $\bar\lambda(\mu)$ is the running coupling. Solve this to obtain
+\begin{align}
+	\bar\lambda(\mu)
+	&= \frac{\lambda}{1 -\frac{3\lambda}{16\pi^2}\ln\mu} \ .
+\end{align}
+The singularity is called a Landau pole and indicates a breakdown of the perturbative theory---even with our renormalization group methods.
+
+\subsection{Renormalization: qualitatively}
+
+Write a one-page qualitative summary of Delamotte's ``A hint or renormalization,'' \texttt{hep-th/0212049}. If that's too technical, do the same for Stevenson's ``Dimensional Analysis in Field Theory.''  If that's too easy, do the same for the original renormalization group bible by Wilson and Kogut, ``The renormalization group and the $\epsilon$ expansion.''
+
+
+\subsection{Renormalization of the ABC Theory}
+
+Write down the Lagrangian for a theory with three scalar particles, $A$, $B$, and $C$. Each has a distinct mass. There is only one interaction: a three-point interaction with one of each type of particle. Renormalize this theory at one-loop order. 
+
+\textsc{Answer}: see ``Renormalization of a model quantum field theory,'' raus and Griffiths, American Journal of Physics \textbf{60}, 1013 (1992).
+
+\subsection{Renormalization in Quantum Mechanics}
+
+Regularization and renormalization also appears in zero-dimensional quantum field theory, or quantum mechanics. Consider a Coulombic atom with some short range potential $V_s(\vec{r})$ in addition to the usual Coulomb piece. Show how low-energy measurements show how to write an effective potential independent of the details of $V_s$. 
+
+\textsc{Answer}: See Lepage, ``How to Renormalize the Schr\"odinger Equation, '' \texttt{nucl-th/9706029}. See also several articles on the American Journal of Physics about renormalizing $\delta$-function potentials in quantum mechanics (e.g. Gosdzinsky and Tarrach and references therein).
+
+\subsection{Renormalization in Quantum Mechanics (extra credit)}
+
+\texttt{hep-th/9305052} uses renormalization techniques in quantum mechanics to show that a system described by the Hulthen potential has two RG fixed points. Self-interacting dark matter with massive mediators are described by a Hulthen potential. Determine the phenomenological significance of the RG fixed points and present it to Professor Hai-Bo Yu.
+
+\subsection{Renormalization and Deep Learning}
+
+Read \texttt{1301.3124} and/or \texttt{1608.08225} and explain what it means to me.
+
+
+
+\end{document}
